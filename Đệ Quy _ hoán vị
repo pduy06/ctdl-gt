@@ -1,0 +1,28 @@
+#include<stdio.h>
+int cnt=0;
+void hv(int a[1000],int i,int n){
+	if(i==n){
+		for(int j=0;j<n;j++){
+			printf("%d",a[j]);
+		}cnt++;
+		printf("\n");
+	}else{
+		for(int j=i;j<n;j++){
+			int tmp=a[i];
+			a[i]=a[j];
+			a[j]=tmp;
+			
+			hv(a,i+1,n);
+		}
+	}
+}
+int main(){
+	int n;
+	printf("nhap so luong : " );scanf("%d",&n);
+	int a[1000];
+	for(int i=0;i<n;i++){
+		printf("nhap a[%d] : ",i+1);scanf("%d",&a[i]);
+	}
+	hv(a,0,n);
+	printf("%d",cnt);	
+}
