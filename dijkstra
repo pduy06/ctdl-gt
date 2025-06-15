@@ -1,0 +1,112 @@
+#include <stdio.h>
+
+#define N_MAX 100     // S? d?nh t?i da c?a d? th?
+#define Duongvc 99999 // Giá tr? d?i di?n cho vô cùng (không có du?ng di)
+
+int n;                // S? d?nh c?a d? th?
+int A[N_MAX][N_MAX];  // Ma tr?n k? tr?ng s?
+int D[N_MAX];         // M?ng luu d? dài du?ng di ng?n nh?t
+int S[N_MAX];         // M?ng dánh d?u d?nh dã du?c xét
+int P[N_MAX];         // M?ng luu d?nh tru?c trên du?ng di ng?n nh?t
+int s, u;             // s: d?nh ngu?n, u: d?nh dang xét
+int Min;              // Bi?n tìm giá tr? nh? nh?t t?m th?i
+
+void Dijkstra(int s)
+{
+    int i, v;
+
+    for (v = 1; v <= n; v++)
+    {
+        D[v] = A[s][v];  // Gán kho?ng cách ban d?u t? s d?n v
+        S[v] = 0;        // Chua xét d?nh nào
+        P[v] = s;        // Ð?nh tru?c v là s
+    }
+    S[s] = 1;            // Ðã xét d?nh s
+
+    while (1)
+    {
+        Min = Duongvc;
+        u = -1;
+
+        // Tìm d?nh u chua xét có D[u] nh? nh?t
+        for (i = 1; i <= n; i++)
+        {
+            if (!S[i] && D[i] < Min)
+            {
+                Min = D[i];
+                u = i;
+            }
+        }
+
+        if (u == -1) // Không còn d?nh nào d? xét
+            break;
+
+        S[u] = 1; // Ðánh d?u u dã du?c xét
+
+        // C?p nh?t kho?ng cách các d?nh k? v?i u
+        for (v = 1; v <= n; v++)
+        {
+            if (!S[v] && A[u][v] < Duongvc && D[u] + A[u][v] < D[v])
+            {
+                D[v] = D[u] + A[u][v];
+                P[v] = u;
+            }
+        }
+    }
+}
+
+// In du?ng di t? s d?n v
+void In_kqua(int s, int v)
+{
+    if (P[v] == s)
+    {
+        printf("\n(%d,%d)=%d", s, v, A[s][v]);
+    }
+    else
+    {
+        In_kqua(s, P[v]);
+        printf("\n(%d,%d)=%d", P[v], v, A[P[v]][v]);
+    }
+}
+
+int main()
+{
+    int v;
+
+    // Nh?p s? d?nh và ma tr?n tr?ng s?
+    printf("Nhap so dinh cua do thi: ");
+    scanf("%d", &n);
+
+    printf("Nhap ma tran ke trong so (%d x %d):\n", n, n);
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+            scanf("%d", &A[i][j]);
+            if (A[i][j] == 0 && i != j)
+                A[i][j] = Duongvc; // Gán vô cùng n?u không có c?nh
+        }
+    }
+
+    printf("Nhap dinh nguon: ");
+    scanf("%d", &s);
+
+    Dijkstra(s);
+
+    for (v = 1; v <= n; v++)
+    {
+        if (v != s)
+        {
+            if (D[v] == Duongvc)
+                printf("\nKhong co duong di tu dinh %d den dinh %d", s, v);
+            else
+            {
+                printf("\n\nDo dai duong di ngan nhat tu %d den %d: %d", s, v, D[v]);
+                printf("\nCac cung tren duong di:");
+                In_kqua(s, v);
+            }
+        }
+    }
+
+    return 0;
+}
